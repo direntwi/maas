@@ -1,44 +1,46 @@
 from django.db import models
-from django.contrib.auth.hashers import make_password
+from django.db.models.query import QuerySet
+from django.db.models.signals import post_save
+from users.models import User
+from django.contrib.auth.models import BaseUserManager
+from django.dispatch import receiver
+
 # Create your models here.
 
-
-class Driver(models.Model):
-    name = models.CharField(max_length= 50)
-    phone_number = models.CharField(max_length=15)
-    email = models.EmailField(unique=True, null=True)
-    password = models.CharField(max_length=50) 
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
-    is_active = models.BooleanField(default = False) #possibly to determine whether a driver is taking commuters
-
-    def __str__(self):
-        return self.name
+class DriverManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs):
+        results = super().get_queryset(*args, **kwargs)
+        return results.filter(role=User.Role.DRIVER)
+    
 
 
-    def save(self, *args, **kwargs):
-        # Hash the password before saving
-        self.password = make_password(self.password)
-        super().save(*args, **kwargs)
+class Driver(User):
+    base_role = User.Role.DRIVER
+    driver = DriverManager() #use something like Driver.drivers.all() to get only drivers
+    class Meta:
+        proxy = True
 
-    def check_password(self, password):
-        return self.password == password
+@receiver(post_save, sender=Driver)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created and instance.role == "DRIVER":
+        DriverProfile.objects.create(user=instance)
 
 
-
+class VehicleManager(BaseUserManager):
+    pass
 
 class Vehicle(models.Model):
-    registration_number = models.CharField(primary_key=True, max_length=15)
+    registration_number = models.CharField(max_length=15)
     brand = models.CharField(max_length=20) #consider a choices field
     make = models.CharField(max_length=20)
     colour = models.CharField(max_length=20)
-    driver = models.ManyToManyField(Driver)
     seats = models.IntegerField()
     available_seats = models.IntegerField()
 
-class Recover(models.Model):
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
-    password_token = models.CharField(max_length=100, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+class DriverProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    driver_id = models.IntegerField(null=True, blank=True)
+    vehicle = models.ManyToManyField(Vehicle)
+
 
 

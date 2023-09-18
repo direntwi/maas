@@ -2,18 +2,13 @@ from rest_framework import serializers
 
 from . import models
 
-class HelloSerializer(serializers.Serializer):
-    """A name field for testing our APIView."""
-    name = serializers.CharField(max_length = 10)
 
-
-
-class DriverSerializer(serializers.ModelSerializer):
+class DriverSerializer(serializers.Serializer):
     """A serializer for our driver objects"""
 
     class Meta:
         model = models.Driver
-        fields = ('id', 'email', 'name', 'password', 'phone_number', 'latitude', 'longitude', 'is_active')
+        fields = ('id', 'email', 'name', 'password', 'phone_number', 'latitude', 'longitude', 'is_active', 'role')
         extra_kwargs = {'password': {'write_only': True}}
 
 
@@ -28,37 +23,41 @@ class DriverSerializer(serializers.ModelSerializer):
 
         )
 
-        driver.save(validated_data['password'])
+        driver.set_password(validated_data['password'])
         driver.save()
         return driver
 
 
 
 
-
-
-
-
-
 class VehicleSerializer(serializers.ModelSerializer):
+    """To find a list of all vehicles in a driver's profile"""
+
+
     class Meta:
         model = models.Vehicle
-        fields = ('registration_number', 'brand', 'make', 'colour', 'seats', 'available_seats')
+        fields = '__all__'
 
-        
-    def create(self, validated_data):
-        """Create and return a new user"""
 
-        vehicle = models.Vehicle(
-            registration_number = validated_data['registration_number'],
-            brand = validated_data['brand'],
-            make = validated_data['make'],
-            colour = validated_data['colour'],
-            seats = validated_data['seats'],
-            available_seats = validated_data['seats']
-
-        )
-
-        vehicle.save()
-        return vehicle
     
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
+
+
+
+
+
+
+
+# class LinkDriverAndVehicleSerializer(serializers.Serializer):
+#         driver_id = serializers.IntegerField()
+#         vehicle_id = serializers.IntegerField()
+
+#         def create(self, validated_data):
+#             driver = models.DriverProfile.objects.get(id=validated_data['driver_id'])
+#             vehicle = models.Vehicle.objects.get(id=validated_data['vehicle_id'])
+
+#             driver.vehicle.add(vehicle)
+
+#             return driver 
