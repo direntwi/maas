@@ -1,16 +1,23 @@
-
-from django.contrib.auth import views as auth_views
-
+from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from. import views
+from .views import (
+    VehicleViewSet, UserViewSet, DriverViewSet, LoginViewSet, login_view,
+    PasswordTokenCheckAPI, RequestPasswordResetEmail, SetNewPasswordAPIView
+    )
 
+
+router = DefaultRouter()
+router.register('user', UserViewSet, basename='user')
+router.register('vehicle', VehicleViewSet, basename='vehicle')
+router.register('driver', DriverViewSet, basename='driver')
+# router.register('login', LoginViewSet, basename='login')
 
 urlpatterns = [
-    path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     
-
+    path('', include(router.urls)),
+    path('login', login_view),
+    path('request-reset-email', RequestPasswordResetEmail.as_view(), name='request-reset-email'),
+    path('password-reset/<uidb64>/<token>/', PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
+    path('password-reset-complete', SetNewPasswordAPIView.as_view(), name='password-reset-complete')
 
 ]

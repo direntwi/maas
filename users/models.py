@@ -25,13 +25,30 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(name, email, phone_number, password, **other_fields)
 
 
+
+class Vehicle(models.Model):
+    registration_number = models.CharField(max_length=15)
+    make = models.CharField(max_length=20) #consider a choices field
+    model = models.CharField(max_length=20)
+    colour = models.CharField(max_length=20)
+    seats = models.IntegerField()
+    available_seats = models.IntegerField()
+
+    def __str__(self):
+        return self.registration_number
+
+
+
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=200)
     email = models.EmailField(unique=True, null=True)
-    phone_number = models.CharField(max_length=15, unique=True)
+    phone_number = models.CharField(max_length=50, unique=True)
     password = models.CharField(max_length=50)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6,null=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6,null=True, blank=True)
+    vehicles = models.ManyToManyField(Vehicle)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
 
@@ -59,11 +76,4 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.name
     
-
-# class Commuter(User):
-#     base_role = User.Role.COMMUTER
-
-#     class Meta:
-#         proxy = True
-
 
