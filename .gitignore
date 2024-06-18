@@ -2,3 +2,4 @@
 /env
 maas/__pycache__/
 users/__pycache__/
+authentication/__pycache__/
