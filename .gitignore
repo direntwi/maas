@@ -1,5 +1,9 @@
 .env
 /env
+
 maas/__pycache__/
 users/__pycache__/
 authentication/__pycache__/
+
+users/migrations/__pycache__/
+authentication/migrations/__pycache__/
