@@ -51,6 +51,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     vehicles = models.ManyToManyField(Vehicle)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
+    is_ready = models.BooleanField(default=False) #checks if drivers and users are ready for trips
+    on_trip = models.BooleanField(default=False) #checks if drivers and users are on a trip
+    
 
     objects = CustomUserManager()
 
