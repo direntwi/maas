@@ -4,6 +4,8 @@
 maas/__pycache__/
 users/__pycache__/
 authentication/__pycache__/
+dispatch/__pycache__
 
 users/migrations/__pycache__/
 authentication/migrations/__pycache__/
+dispatch/migrations/__pycache__
