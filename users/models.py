@@ -32,7 +32,7 @@ class Vehicle(models.Model):
     model = models.CharField(max_length=20)
     colour = models.CharField(max_length=20)
     seats = models.IntegerField()
-    available_seats = models.IntegerField()
+    available_seats = models.IntegerField() #for carpool integration later
 
     def __str__(self):
         return self.registration_number
