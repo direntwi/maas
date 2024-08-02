@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "authentication.apps.AuthenticationConfig",
     "dispatch.apps.DispatchConfig",
+    "notification.apps.NotificationConfig",
     'rest_framework',
     'rest_framework.authtoken',
     'django_rest_passwordreset',
@@ -82,6 +84,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "maas.wsgi.application"
+
+ASGI_APPLICATION = "maas.asgi.application"
 
 
 # Database
@@ -165,3 +169,18 @@ EMAIL_PORT = environ.get('EMAIL_PORT')
 EMAIL_USE_TLS = environ.get('EMAIL_USE_TLS')
 EMAIL_HOST_USER = environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = environ.get('EMAIL_HOST_PASSWORD')
+
+CHANNEL_LAYERS = {
+    'default': {
+        "BACKEND" : "channels.layers.InMemoryChannelLayer",
+    }
+}
+
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [('127.0.0.1', 6379)],
+#         },
+#     },
+# }
